@@ -1,0 +1,65 @@
+services:
+  ansible:
+    build:
+      context: ansible
+      dockerfile: Dockerfile
+    container_name: ansible
+    networks:
+      ansiblenet:
+        ipv4_address: 192.168.32.100
+    tty: true
+    volumes:
+      - ./ansible:/ansible
+    working_dir: /ansible
+
+  osaka:
+    build:
+      context: common
+      dockerfile: Dockerfile
+    container_name: osaka
+    networks:
+      ansiblenet:
+        ipv4_address: 192.168.32.11
+    tty: true
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "22"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nagoya:
+    build:
+      context: common
+      dockerfile: Dockerfile
+    container_name: nagoya
+    networks:
+      ansiblenet:
+        ipv4_address: 192.168.32.12
+    tty: true
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "22"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  tokyo:
+    build:
+      context: common
+      dockerfile: Dockerfile
+    container_name: tokyo
+    networks:
+      ansiblenet:
+        ipv4_address: 192.168.32.13
+    tty: true
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "22"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  ansiblenet:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 192.168.32.0/24
